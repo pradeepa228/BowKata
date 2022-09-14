@@ -13,42 +13,56 @@ namespace Bowling
         {
 
         }
-        public int calculate_total(string inputString)
+        public int Calculate_total(string inputString)
         {
             int sum = 0;
             int iterartor = 0;
-            inputString = inputString.Replace('-', '0');
             bool checkSpare = false;
             bool checkStrike = false;
-            bool contiStrike = false;
-            
+            bool continousStrike = false;
+            Char spareValue = '/';
+            Char strikeValue = 'X';
 
+            //Replacing the miss '-' with '0'
+            inputString = inputString.Replace('-', '0');
+           
+            //Splitting the frames using ' '
             string[] frames = inputString.Split(' ');
+
             foreach (var tries in frames)
             {
                 iterartor++;
-                Char spareValue = '/';
-                Char strikeValue = 'X';
-
 
                 if (tries.Contains(spareValue))
                 {
-                    //Console.WriteLine("Contains Spare");
-                    sum = sum + 10;
-                    checkSpare = true;
+                    //If tries contains spare, Sum should be added by 10
+                    
+                    sum += 10;
+                    
+                    if (checkSpare == true)
+                    {
+                        char temp = tries[0];
+                        int number = temp-'0';
+                        sum += number;
+                    }
+                    //Making checkSpare to true to add the score of next try
+                   checkSpare = true;
+
                 } else if (tries.Contains(strikeValue)) {
-                    Console.WriteLine(iterartor + "iterartor");
-                    sum = sum + 10;
+                    //Tries has strike
+                    sum += 10;
+
                     if (checkStrike == true)
                     {
-                        if (contiStrike == true && iterartor < 10)
+                        if (continousStrike == true && iterartor < 10)
                         {
-                            sum = sum + 20;
+                            // If all are strike, no need to add the sum by 20 in the last frame
+                            sum += 20;
                         }
                         else
                         {
-                            sum = sum + 10;
-                            contiStrike = true;
+                            sum += 10;
+                            continousStrike = true;
                         }
                     }
                     if (iterartor < 10)
@@ -58,38 +72,36 @@ namespace Bowling
                     
                 } else {
                     int number = Int32.Parse(tries);
-                    //Console.WriteLine("converted number:" + number);
+                    
                     while (number > 0)
                     {
                         if (checkStrike == true)
                         {
-                            // Console.WriteLine("Strike" + checkStrike); 
-                            if(contiStrike == true)
+                            if(continousStrike == true)
                             {
                                 sum += number / 10;
-                                contiStrike = false;
+                                continousStrike = false;
                             }
                             sum += number / 10;
                             sum += number % 10;
                             checkStrike = false;
                             
                         }
-
+                        //If no spare or no strike, simply add the two numbers of the try
                         sum += number % 10;
                         number /= 10;
+                        
 
+                        // Indicates Previous spare, adding the score of next try
                         if (checkSpare == true)
                         {
-                            Console.WriteLine("Spare" + checkSpare); 
-                            sum = sum + number;
+                            sum += number;
                             checkSpare = false;
                             
                         }
                     }
-                    
                 } 
-                Console.WriteLine(tries + " " + sum);
-            }
+             }
             return sum;
         }
     }
